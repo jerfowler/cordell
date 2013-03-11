@@ -1,0 +1,51 @@
+{
+  "name": "cordell",
+  "description": "Cordell - One bad mofo directory walker and file watcher",
+  "version": "0.1.0",
+  "keywords": [
+    "walker",
+    "watcher",
+    "fs",
+    "watch",
+    "watchFile",
+    "file",
+    "chokidar"
+  ],
+  "homepage":"https://github.com/jerfowler/cordell",
+  "author": {
+    "name": "Jeremy Fowler",
+    "email": "jeremy.f76@gmail.com",
+    "url": "http://jerfowler.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jerfowler/cordell.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jerfowler/cordell/issues"
+  },
+  "license": "BSD",
+  "main": "./lib/index.js",
+  "engines": {
+    "node": "~0.6.20 || 0.7 || 0.8 || 0.9"
+  },
+  "scripts": {
+    "prepublish": "coffee -o lib/ src/",
+    "test": "coffee test.coffee"
+  },
+  "dependencies": {
+    "mocha": "~1.7.3",
+    "debug": "~0.7.2",
+    "coffeelint": "*",
+    "jshint": "*"    
+  },
+  "devDependencies": {
+    "chai": "~1.4.0",
+    "sinon": "~1.5.2",
+    "sinon-chai": "2.2.0",
+    "coffee-script": "~1.4.0"
+  },  
+  "readmeFilename": "README.md",
+  "_id": "cordell@0.1.0",
+  "_from": "cordell@"
+}
