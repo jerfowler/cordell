@@ -1,52 +1,61 @@
 Mocha = require 'mocha'
 
 class Tester
-    _tests: []
-    _source: null
-    _config: null
-    _pattern: null
     constructor: (config, logger) ->
         @_source = config.source ? /.*\.(coffee|js)$/
-        @_config = config.mocha ? {}
-        @_pattern = @_config.pattern ? /^.*_test\.(coffee|js)$/
-        @_options = @_config.options ? reporter:'spec'
+        @_config = config?.tester ? {}
+
+        @_mocha = @_config.mocha ? {}
+        @_mocha.pattern ?= /^.*_test\.(coffee|js)$/
+        @_mocha.options ?= reporter:'spec'
+        @_mocha.tests ?= []
+
         @_debug = if config.debug?
             require('debug')("#{config.debug}:tester")
         else ->
         @_logger = logger ? console
 
-    _rem: (item) ->
-        @_tests.splice i, 1 for i in @_tests when i is item
-
-    run: (files) ->
-        mocha = new Mocha(@_options)
+    _mochaRun: (files) ->
+        mocha = new Mocha(@_mocha.options)
         for file in files
             @_debug "Running #{file}..."
             mocha.addFile file
         mocha.run()
 
+    add: (paths...) ->
+        for path in paths
+            if @_mocha.pattern.test path
+                @_mocha.tests.push path unless path in @_mocha.tests
+        @
+
+    rem: (paths...) ->
+        for path in paths
+            @_mocha.tests.splice i, 1 for i in @_mocha.tests when i is path
+        @
+
+    run: (path) ->
+        if path? and path in @_mocha.tests
+            @_mochaRun [path]
+        else
+            @_mochaRun @_mocha.tests
+        @
+
+    test: (paths...) ->
+        files = paths.filter (file) => @_source.test file
+        @add files...
+        @run()        
+
     listen: (watcher, snapshot, delay=2000) ->
         return if @_config.enabled is off
         @_logger.info 'Running tests...'
         setTimeout =>
-            @_tests = snapshot.filter (file) => @_pattern.test file
-            @run @_tests
+            @test snapshot...
             watcher.on 'add', (path) =>
-                if @_pattern.test path
-                    @_tests.push path unless path in @_tests
-                    @run [path]
-                else if @_source.test path
-                    @run @_tests
-
+                @add path .run path if @_source.test path
             watcher.on 'rem', (path) =>
-                if @_pattern.test path
-                    @_rem path
-
+                @rem path .run() if @_source.test path
             watcher.on 'change', (path) =>
-                if @_pattern.test path
-                    @run [path]
-                else if @_source.test path
-                    @run @_tests
+                @run path if @_source.test path
         , delay
 
 module.exports = exports = Tester

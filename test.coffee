@@ -19,10 +19,11 @@ options =
                 indentation:
                     value: 4
                     level: "error"
-    mocha:
+    tester:
         enabled: on
-        pattern: /^.*_test\.coffee$/
-        options:
-            reporter:'spec'
+        mocha:
+            pattern: /^.*_test\.coffee$/
+            options:
+                reporter:'spec'
 
 walker = cordell.ranger(['src', 'test'], options)

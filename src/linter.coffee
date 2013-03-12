@@ -19,7 +19,7 @@ class Linter
         @_jshint = @_config.jshint ? {}
         @_jshint.options ?= {}
         @_jshint.globals ?= {}
-        @_jshint.pattern ?= /^(?!public(\/|\\)).*\.js$/
+        @_jshint.pattern ?= /^.*\.js$/
 
         @_debug = if config.debug?
             require('debug')("#{config.debug}:linter")
@@ -46,19 +46,20 @@ class Linter
         unless success
             @_jsError error, file for error in jshint.errors when error?
 
-    lint: (file) ->
-        @_debug "Linting #{file}..."
-        if @_coffeelint.pattern.test file
-            @_csLint file
-        else if @_jshint.pattern.test file
-            @_jsLint file
+    lint: (files...) ->
+        for file in files
+            @_debug "Linting #{file}..."
+            if @_coffeelint.pattern.test file
+                @_csLint file
+            else if @_jshint.pattern.test file
+                @_jsLint file
 
     listen: (watcher, snapshot, delay=1000) ->
         return if @_config.enabled is off
         @_logger.info 'Linting files...'
         setTimeout =>
             files = snapshot.filter (file) => @_source.test file
-            @lint file for file in files
+            @lint files...
             watcher.on 'add', (path) =>
                 @lint path if @_source.test path
             watcher.on 'change', (path) =>
