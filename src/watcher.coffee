@@ -76,7 +76,7 @@ class Watcher extends EventEmitter
                 @add join path, f for f in nl when (list.indexOf f) is -1
                 list = nl
                 @emit 'change', path, curr
-                @emit 'change:dir', path, curr
+                @emit 'change:dir', path, curr, list[..]
         watchFile path, @_options, @_watching.dirs[path]
         @emit 'watch', path
         @emit 'watch:dir', path

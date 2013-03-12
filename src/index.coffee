@@ -27,13 +27,13 @@ module.exports.lint = (paths, options={}) ->
     linter = new Linter(options)
     walker = new Walker(paths, options)
     walker.on 'end', (files, stats) ->
-        linter.listen walker, files, 1000
+        linter.lint files...
 
 module.exports.test = (paths, options={}) ->
     tester = new Tester(options)
     walker = new Walker(paths, options)
     walker.on 'end', (files, stats) ->
-        tester.listen walker, files, 1000
+        tester.test files...
 
 module.exports.ranger = (paths, options={}) ->
     options.watch = on

@@ -11,9 +11,16 @@ class Walker extends EventEmitter
     _watcher: null
     _hasEnded: false
     constructor: (paths, options={}, watcher) ->
+        # Ignore nothing by default
+        @_ignore = options.ignore ? /a^/
+        @_ignorePath = options.ignorePath ? /a^/
+        # Match everything by default
+        @_match = options.match ? /.*/
+        @_matchPath = options.matchPath ? /.*/
+        @_options = options        
         @_debug(options.debug) if options.debug?
         @_watch(watcher, options) if watcher? or options.watch?
-        @walk(paths, options) if paths
+        @walk(paths) if paths
 
     _watch: (watcher, options) ->
         @_watcher = watcher ? new Watcher(options)
@@ -31,8 +38,8 @@ class Walker extends EventEmitter
             @_rem path
             @emit 'rem', path
             @emit 'unlink', path
-        @_watcher.on 'change:dir', (path, stats) =>
-            @emit 'change:dir', path, stats
+        @_watcher.on 'change:dir', (path, stats, list) =>
+            @emit 'change:dir', path, stats, list
         @_watcher.on 'change:file', (path, stats) =>
             @emit 'change', path, stats
         @_watcher.on 'error', (path, error) ->
@@ -104,31 +111,28 @@ class Walker extends EventEmitter
         @_end(path)
 
     _end: (path) ->
-        return if @_hasEnded
         delete @_paths[path]
+        return if @_hasEnded
         if Object.keys(@_paths).length is 0
             @emit 'end', Object.keys(@_files), @_clone(@_files)
             @_hasEnded = true
 
-    walk: (paths, options={}) ->
-        # Ignore nothing by default
-        @_ignore = options.ignore ? /a^/
-        @_ignorePath = options.ignorePath ? /a^/
-        # Match everything by default
-        @_match = options.match ? /.*/
-        @_matchPath = options.matchPath ? /.*/
-
-        @_options = options
+    _close: ->
         @_files = {}
         @_paths = {}
         @_hasEnded = false
-        @_watcher?.close()
+        @_watcher?.close()        
+
+    walk: (paths) ->
         paths = [paths] if not isArray paths
         @_stat path for path in paths
         @
 
     close: ->
-        @_watcher?.close()
+        if @_hasEnded 
+            @_close()
+        else 
+            @on 'end', @_close
         @
 
 module.exports = exports = Walker
