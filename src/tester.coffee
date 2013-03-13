@@ -51,11 +51,11 @@ class Tester
         setTimeout =>
             @test snapshot...
             watcher.on 'add', (path) =>
-                @add path .run path if @_source.test path
+                @add(path).run(path) if @_source.test path
             watcher.on 'rem', (path) =>
-                @rem path .run() if @_source.test path
+                @rem(path).run() if @_source.test path
             watcher.on 'change', (path) =>
-                @run path if @_source.test path
+                @run(path) if @_source.test path
         , delay
 
 module.exports = exports = Tester

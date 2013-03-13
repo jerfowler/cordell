@@ -6,10 +6,6 @@
 Watcher = require './watcher'
 
 class Walker extends EventEmitter
-    _files: {}
-    _paths: {}
-    _watcher: null
-    _hasEnded: false
     constructor: (paths, options={}, watcher) ->
         # Ignore nothing by default
         @_ignore = options.ignore ? /a^/
@@ -17,10 +13,15 @@ class Walker extends EventEmitter
         # Match everything by default
         @_match = options.match ? /.*/
         @_matchPath = options.matchPath ? /.*/
-        @_options = options        
-        @_debug(options.debug) if options.debug?
-        @_watch(watcher, options) if watcher? or options.watch?
-        @walk(paths) if paths
+        @_options = options
+        @_files = {}
+        @_paths =  {}
+        @_hasEnded = false
+        @_debug options.debug if options.debug?
+        @_watch watcher, options if watcher? or options.watch?
+        if paths?
+            paths = [paths] if not isArray paths
+            @walk paths...
 
     _watch: (watcher, options) ->
         @_watcher = watcher ? new Watcher(options)
@@ -118,20 +119,20 @@ class Walker extends EventEmitter
             @_hasEnded = true
 
     _close: ->
+        @_watcher?.close()
         @_files = {}
         @_paths = {}
         @_hasEnded = false
-        @_watcher?.close()        
+        @emit 'closed'
 
-    walk: (paths) ->
-        paths = [paths] if not isArray paths
+    walk: (paths...) ->
         @_stat path for path in paths
         @
 
     close: ->
-        if @_hasEnded 
+        if @_hasEnded
             @_close()
-        else 
+        else
             @on 'end', @_close
         @
 

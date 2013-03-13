@@ -2,10 +2,9 @@
 {stat, readdir, watchFile, unwatchFile} = require 'fs'
 {basename, join} = require 'path'
 
+sep = if process.platform is 'win32' then '\\' else '/'
+
 class Watcher extends EventEmitter
-    _watching:
-        files: {}
-        dirs: {}
     constructor: (options={}) ->
         @_debug(options.debug) if options.debug?
         # Ignore nothing by default
@@ -14,7 +13,7 @@ class Watcher extends EventEmitter
         # Match everything by default
         @_match = options.match ? /.*/
         @_matchPath = options.matchPath ? /.*/
-
+        @_watching = files: {}, dirs: {}
         @_options = {}
         @_options.persistent = options.persistent ? true
         @_options.interval = options.interval ? 100
@@ -65,6 +64,7 @@ class Watcher extends EventEmitter
             return @emit 'error', path, err if err
             return @_dir path, stats if stats.isDirectory()
             return @_file path, stats if stats.isFile()
+        @
 
     addDir: (path, list=[]) ->
         return if @_watching.dirs[path]
@@ -80,6 +80,7 @@ class Watcher extends EventEmitter
         watchFile path, @_options, @_watching.dirs[path]
         @emit 'watch', path
         @emit 'watch:dir', path
+        @
 
     addFile: (path) ->
         return if @_watching.files[path]
@@ -90,18 +91,26 @@ class Watcher extends EventEmitter
         watchFile path, @_options, @_watching.files[path]
         @emit 'watch', path
         @emit 'watch:file', path
+        @
 
     rem: (path) ->
         for own file, listener of @_watching.files
-            if (file.indexOf path) is 0
+            if file is path
                 @remFile file
-                @emit 'rem', path
+                @emit 'rem', file
                 @emit 'rem:file', file
+                return @
+            if (file.indexOf path+sep) is 0
+                @remFile file
+                @emit 'rem', file
+                @emit 'rem:file', file
+
         for own dir, listener of @_watching.dirs
-            if (dir.indexOf path) is 0
+            if dir is path or (dir.indexOf path+sep) is 0
                 @remDir dir
-                @emit 'rem', path
+                @emit 'rem', dir
                 @emit 'rem:dir', dir
+        @
 
     remDir: (path) ->
         return unless @_watching.dirs[path]
@@ -109,6 +118,7 @@ class Watcher extends EventEmitter
         delete @_watching.dirs[path]
         @emit 'unwatch', path
         @emit 'unwatch:dir', path
+        @
 
     remFile: (path) ->
         return unless @_watching.files[path]
@@ -116,6 +126,7 @@ class Watcher extends EventEmitter
         delete @_watching.files[path]
         @emit 'unwatch', path
         @emit 'unwatch:file', path
+        @
 
     close: ->
         files = @_watching.files
@@ -130,5 +141,6 @@ class Watcher extends EventEmitter
             unwatchFile path, listener
             @emit 'unwatch', path
             @emit 'unwatch:dir', path
+        @
 
 module.exports = exports = Watcher

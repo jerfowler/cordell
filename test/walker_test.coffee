@@ -28,10 +28,10 @@ describe 'Walker', ->
     beforeEach ->
         @walker = new Walker
 
-    it 'Expect fixture files to have been created', ->
-        expect(existsSync fixture 'a', '1.js').to.be.true
-        expect(existsSync fixture 'a', 'b', '2.js').to.be.true
-        expect(existsSync fixture 'a', 'b', 'c', '3.js').to.be.true
+    # it 'Expect fixture files to have been created', ->
+    #     expect(existsSync fixture 'a', '1.js').to.be.true
+    #     expect(existsSync fixture 'a', 'b', '2.js').to.be.true
+    #     expect(existsSync fixture 'a', 'b', 'c', '3.js').to.be.true
 
     it 'Should emit `file` event when a file is walked', (done) ->
         spy = sinon.spy()
@@ -49,6 +49,8 @@ describe 'Walker', ->
             done()
         @walker.walk fixture 'a'
 
+    it 'Should emit `other` event when a special file is walked'
+
     it 'Shoule emit `error` event when the path doesn\'t exist', (done) ->
         spy = sinon.spy()
         @walker.on 'error', spy
@@ -65,7 +67,31 @@ describe 'Walker', ->
             done()
         @walker.walk fixture 'a'
 
-    describe 'End Event', ->
+    describe 'When the watcher is enabled', ->
+        it 'Should emit `add` and `file` events when a new file is added'
+        it 'Should emit `rem` and `unlink` events when a file is removed'
+        it 'Should emit `change` event when a file has changed'
+        it 'Should emit `add:dir` and `dir` events when a new directory is added'
+        it 'Should emit `rem:dir` event when a directory is removed'
+        it 'Should emit `change:dir` event when a directory has changed'
+
+    describe '`file`, `add`, `change`, & `other` events', ->
+        it 'Should pass a path'
+        it 'Should pass a stats object'
+
+    describe '`dir`, `add:dir`, & `change:dir` events', ->
+        it 'Should pass a path'
+        it 'Should pass a stats object'
+        it 'Should pass a file list'
+
+    describe '`rem`, `unlink` & `rem:dir` events', ->
+        it 'Should pass a path'
+
+    describe '`error` event', ->
+        it 'Should pass a path'
+        it 'Should pass an error object'
+
+    describe '`end` event', ->
         it 'Should pass an array of filenames', (done) ->
             @walker.on 'end', (files, stats) ->
                 files.should.eql [
@@ -76,10 +102,13 @@ describe 'Walker', ->
                 done()
             @walker.walk fixture 'a'
 
-        it 'Should pass stats objects indexed by filename', (done) ->
+        it 'Should pass an object of stats objects keyed by filename', (done) ->
             @walker.on 'end', (files, stats) ->
                 expect(stats[fixture 'a', '1.js'].size).to.eql(9)
                 expect(stats[fixture 'a', 'b', '2.js'].size).to.eql(9)
                 expect(stats[fixture 'a', 'b', 'c', '3.js'].size).to.eql(9)
+                expect(Object.keys(stats).length).to.eql(3)
                 done()
             @walker.walk fixture 'a'
+
+        it 'Should only be emitted once'
