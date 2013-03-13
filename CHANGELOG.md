@@ -1,3 +1,13 @@
+# Cordell 0.1.2 (March 13, 2013)
+* More tests, even more pending...
+* fixed run() chaining bug in tester
+* fixed walker shared _files instance bug
+* walker: Emit `closed` event when close() completes
+* watcher: chainable methods
+* watcher: better `rem` logic
+* added test/config.coffee and cleaned up test.coffee
+
+
 # Cordell 0.1.1 (March 12, 2013)
 * Added more to README
 * refactored linter & tester
