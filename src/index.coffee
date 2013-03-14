@@ -1,9 +1,9 @@
 {resolve} = require 'path'
 
-module.exports.Walker = Walker = require './walker'
-module.exports.Watcher = Watcher = require './watcher'
 module.exports.Linter = Linter = require './linter'
 module.exports.Tester = Tester = require './tester'
+module.exports.Walker = Walker = require './walker'
+module.exports.Watcher = Watcher = require './watcher'
 
 resetCache = (files) ->
     for path in files
@@ -23,25 +23,12 @@ module.exports.watch = (paths, options={}, watcher) ->
     options.watch = on
     new Walker(paths, options, watcher)
 
-module.exports.lint = (paths, options={}) ->
-    linter = new Linter(options)
-    walker = new Walker(paths, options)
-    walker.on 'end', (files, stats) ->
-        linter.lint files...
-
-module.exports.test = (paths, options={}) ->
-    tester = new Tester(options)
-    walker = new Walker(paths, options)
-    walker.on 'end', (files, stats) ->
-        tester.test files...
-
 module.exports.ranger = (paths, options={}, logger) ->
     options.watch = on
     linter = new Linter(options, logger)
     tester = new Tester(options, logger)
     walker = new Walker(paths, options)
     walker.on 'end', (files, stats) ->
-        console.log "Watching #{files.length} files..."
         walker.on 'add', (path) ->
             resetCache files
             files.push path
@@ -52,6 +39,18 @@ module.exports.ranger = (paths, options={}, logger) ->
             resetCache files
         linter.listen walker, files, 1000
         tester.listen walker, files, 2000
+
+module.exports.lint = (paths, options={}, logger) ->
+    linter = new Linter(options, logger)
+    walker = new Walker(paths, options)
+    walker.on 'end', (files, stats) ->
+        linter.lint files...
+
+module.exports.test = (paths, options={}, logger) ->
+    tester = new Tester(options)
+    walker = new Walker(paths, options)
+    walker.on 'end', (files, stats) ->
+        tester.test files...
 
 module.exports.snapshot = (paths, options={}, callback) ->
     options.watch = off
