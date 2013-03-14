@@ -17,9 +17,12 @@ I like [chokidar](https://github.com/paulmillr/chokidar) and it was inspiration
 for this project. However, I wanted a clean way to get a snapshot of the files that
 already existed and those files that were added later. I wanted a utility that was a 
 bit more verbose when describing what it was doing when it was doing it. I wanted a
-utility that separated the recursive directory walking functionality from the file and
-directory watching functionality. Finally, I wanted a utility that watched my files 
-as I coded and immediately linted and tested them when there are changes.
+utility that separated the recursive directory walking chocolate from the file 
+watching peanut butter, but still come together in perfect harmony. 
+
+Finally, I wanted a utility that watched my files as I coded and immediately linted 
+and tested them when there are changes... over and over again... while flushing the 
+require cache and dynamically reloading modules in a single process.
 
 I feel Cordell does all that and more.
 
@@ -30,7 +33,7 @@ I feel Cordell does all that and more.
 - more configurable ignore and match options
 - crisp / clean coffeescript source
 - a built-in CI environment that makes use of the watcher / walker combo
-    - [mocha](http://visionmedia.github.com/mocha/) tester
+    - [mocha](http://visionmedia.github.com/mocha/)
     - [coffeelint](http://www.coffeelint.org/)
     - [jshint](http://www.jshint.com/)
 
@@ -57,9 +60,10 @@ walker
     .on('error', function(path, error){
         console.log('Error happened at', path, error); });
     .on('end', function(files, stats){ 
-        console.log('There were', files.length, 'total files found...'); });
+        console.log('There were', files.length, 'total files found...');
         // To reset the walker and emit a new `end` event
         // walker.close();
+     });
 
 // Add additional paths or wait till all your listeners are in place before walking
 walker.walk('file', 'dir', paths...)
@@ -85,10 +89,23 @@ watcher
     .on('change:dir', function(path, stat, list){
         console.log('Directoy', path, 'has changed. Now', list.length, 'files.');); });
 
+    // Plus all the walk events
+    .on('file', function(path, stat){ 
+        // file events are emitted while walking and when new files are added
+        console.log('File', path, '[', stat.size, ']', 'was found...'); });
+    .on('dir', function(path, stat, list){ 
+        // dir events are emitted while walking and when new directories are added
+        console.log('Directory', path, 'has', list.length, 'files...'); });
+
     .on('error', function(path, error){
         console.log('Error happened at', path, error); });
     .on('end', function(files, stats){ 
         console.log('There were', files.length, 'initial files found...'); });
+
+
+// You can still add additional paths or wait till all your listeners are in place before watching
+watcher.walk('file', 'dir', paths...)
+
 
 // To stop watching files
 // watcher.close();
@@ -117,9 +134,10 @@ options = {
 }
 
 ranger = cordell.ranger(['src', 'test'], options);
-
 ```
+
+See the test.coffee script, we eat our own dog food here...
 
 ## API
 
-coming soon... (read the test files)
+coming soon... (read the test files for now)
