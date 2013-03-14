@@ -123,16 +123,17 @@ class Walker extends EventEmitter
         @_files = {}
         @_paths = {}
         @_hasEnded = false
+        @removeListener 'end', @_close
         @emit 'closed'
+        @
 
     walk: (paths...) ->
         @_stat path for path in paths
         @
 
     close: ->
-        if @_hasEnded
-            @_close()
-        else
+        return @_close() if @_hasEnded
+        if Object.keys(@_paths).length isnt 0
             @on 'end', @_close
         @
 

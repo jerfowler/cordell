@@ -5,10 +5,10 @@ class Tester
         @_source = config.source ? /.*\.(coffee|js)$/
         @_config = config?.tester ? {}
 
-        @_mocha = @_config.mocha ? {}
-        @_mocha.pattern ?= /^.*_test\.(coffee|js)$/
-        @_mocha.options ?= reporter:'spec'
-        @_mocha.tests ?= []
+        @_mocha = {}
+        @_mocha.pattern = @_config.mocha?.pattern ? /^.*_test\.(coffee|js)$/
+        @_mocha.options = @_config.mocha?.options ? reporter:'spec'
+        @_mocha.tests = []
 
         @_debug = if config.debug?
             require('debug')("#{config.debug}:tester")

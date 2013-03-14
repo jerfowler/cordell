@@ -1,7 +1,7 @@
 {
   "name": "cordell",
   "description": "Cordell - One bad mofo directory walker and file watcher",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "keywords": [
     "walker",
     "watcher",
@@ -36,8 +36,8 @@
   "dependencies": {
     "mocha": "~1.7.3",
     "debug": "~0.7.2",
-    "coffeelint": "*",
-    "jshint": "*"    
+    "coffeelint": "~0.5.4",
+    "jshint": "~1.1.0"    
   },
   "devDependencies": {
     "chai": "~1.4.0",
@@ -46,6 +46,6 @@
     "coffee-script": "~1.4.0"
   },  
   "readmeFilename": "README.md",
-  "_id": "cordell@0.1.2",
+  "_id": "cordell@0.1.3",
   "_from": "cordell@"
 }

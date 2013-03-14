@@ -12,14 +12,14 @@ class Linter
         @_source = config?.source ? /.*\.(coffee|js)$/
         @_config = config?.linter ? {}
 
-        @_coffeelint = @_config.coffeelint ? {}
-        @_coffeelint.options ?= {}
-        @_coffeelint.pattern ?= /.*\.coffee$/
+        @_coffeelint = {}
+        @_coffeelint.options = @_config.coffeelint?.options ? {}
+        @_coffeelint.pattern = @_config.coffeelint?.pattern ? /.*\.coffee$/
 
-        @_jshint = @_config.jshint ? {}
-        @_jshint.options ?= {}
-        @_jshint.globals ?= {}
-        @_jshint.pattern ?= /^.*\.js$/
+        @_jshint = {}
+        @_jshint.options = @_config.jshint?.options = {}
+        @_jshint.globals = @_config.jshint?.globals = {}
+        @_jshint.pattern = @_config.jshint?.pattern = /^.*\.js$/
 
         @_debug = if config.debug?
             require('debug')("#{config.debug}:linter")

@@ -60,6 +60,8 @@ class Watcher extends EventEmitter
                 @addFile path
 
     add: (path) ->
+        return if @_watching.dirs[path]
+        return if @_watching.files[path]
         stat path, (err, stats) =>
             return @emit 'error', path, err if err
             return @_dir path, stats if stats.isDirectory()

@@ -1,3 +1,12 @@
+# Cordell 0.1.3 (March 14, 2013)
+* Updated README
+* added custom logger parameter to ranger
+* linter & tester: fixed defaults when options are frozen
+* walker: tweaked close functionality
+* watcher: ignore duplicate paths on add
+* more tests and pending tests... (TODO)
+
+
 # Cordell 0.1.2 (March 13, 2013)
 * More tests, even more pending...
 * fixed run() chaining bug in tester

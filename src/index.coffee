@@ -35,10 +35,10 @@ module.exports.test = (paths, options={}) ->
     walker.on 'end', (files, stats) ->
         tester.test files...
 
-module.exports.ranger = (paths, options={}) ->
+module.exports.ranger = (paths, options={}, logger) ->
     options.watch = on
-    linter = new Linter(options)
-    tester = new Tester(options)
+    linter = new Linter(options, logger)
+    tester = new Tester(options, logger)
     walker = new Walker(paths, options)
     walker.on 'end', (files, stats) ->
         console.log "Watching #{files.length} files..."
