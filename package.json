@@ -31,7 +31,8 @@
   },
   "scripts": {
     "prepublish": "coffee -o lib/ src/",
-    "test": "coffee test.coffee"
+    "test": "coffee test.coffee",
+    "ci": "coffee ranger.coffee"
   },
   "dependencies": {
     "mocha": "~1.7.3",

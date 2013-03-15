@@ -5,6 +5,8 @@ One bad mother...
 A walker, watcher, and CI utility that delivers a smooth roundhouse kick to your 
 current development environment.
 
+[![build status](https://secure.travis-ci.org/jerfowler/cordell.png)](http://travis-ci.org/jerfowler/cordell)
+
 ## What is this?
 
 - An event based file / directory walker utility
@@ -79,7 +81,7 @@ watcher
     .on('add:dir', function(file, stat, list){
         console.log('Directory', path, 'was added. With', list.length, 'files.'); });
 
-    .on('rem', function(path){ // also emits optional 'unlink'
+    .on('rem', function(path){ // also emits 'unlink' for chokidar compatibility
         console.log('File', path, 'has been removed'); });
     .on('rem:dir', function(path){
         console.log('Directoy', path, 'has been removed'); });
