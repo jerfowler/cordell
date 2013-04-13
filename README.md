@@ -113,6 +113,13 @@ watcher.walk('file', 'dir', paths...)
 // watcher.close();
 ```
 
+The Watcher is modular, so you can specify whether to use Node's `watch` or `watchFile` methods.
+
+```javascript
+// use watch instead of watchFile if its supported on your system for better performance
+var watcher = cordell.watch('file, dir, or array', {module: 'watch'});
+```
+
 ### Ranger CI functionality
 
 ```javascript
