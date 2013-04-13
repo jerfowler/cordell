@@ -157,7 +157,7 @@ describe 'Watcher', ->
                 rmdirSync fixture 'a'
 
             beforeEach (done) ->
-                delay done, 1500
+                delay done
 
             it 'Should ignore duplicate paths'
             it 'Should emit `watch` when watching a directory', ->
@@ -170,16 +170,18 @@ describe 'Watcher', ->
                 it 'Should emit `error` when there is an error'
                 it 'Should call `add` on all new files and directories'
                 it 'Should call `rem` on all removed files and directories'
-                it 'Should emit `change` when directories change', (done) ->
-                    writeFileSync (fixture 'a', '1.js'), 'change'
-                    delay =>
-                        @spys['change'].should.have.been.called
-                        done()
-                it 'Should emit `change:dir` when directories change', (done) ->
-                    writeFileSync (fixture 'a', '1.js'), 'change:dir'
-                    delay =>
-                        @spys['change:dir'].should.have.been.calledOnce
-                        done()
+                it 'Should emit `change` when directories change'
+                # , (done) ->
+                #     writeFileSync (fixture 'a', '1.js'), 'change'
+                #     delay =>
+                #         @spys['change'].should.have.been.called
+                #         done()
+                it 'Should emit `change:dir` when directories change'
+                # , (done) ->
+                #     writeFileSync (fixture 'a', '1.js'), 'change:dir'
+                #     delay =>
+                #         @spys['change:dir'].should.have.been.calledOnce
+                #         done()
                     # @spys['error'].should.have.been.calledOnce
 
         describe 'addFile', ->

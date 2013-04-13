@@ -6,7 +6,6 @@ class Watch
         return if @_watching.dirs[path]
         @_watching.dirs[path] = watch path, @_options, (evnt, name) =>
             if evnt is 'change'
-                console.log 'watch: change!'
                 stat path, (err, stats) =>
                     return @emit 'error', path, err if err                    
                     readdir path, (err, nl) =>
@@ -19,8 +18,6 @@ class Watch
             else if evnt is 'rename'
                 @_watching.dirs[path].close()
                 delete @_watching.dirs[path]
-            else
-                console.log evnt
         @emit 'watch', path
         @emit 'watch:dir', path
         @
