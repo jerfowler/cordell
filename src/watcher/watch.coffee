@@ -1,23 +1,20 @@
 {stat, readdir, watch} = require 'fs'
+{join} = require 'path'
 
 class Watch
 
     addDir: (path, list=[]) ->
         return if @_watching.dirs[path]
         @_watching.dirs[path] = watch path, @_options, (evnt, name) =>
-            if evnt is 'change'
-                stat path, (err, stats) =>
-                    return @emit 'error', path, err if err                    
-                    readdir path, (err, nl) =>
-                        return @emit 'error', path, err if err
-                        @rem join path, f for f in list when (nl.indexOf f) is -1
-                        @add join path, f for f in nl when (list.indexOf f) is -1
-                        list = nl
-                        @emit 'change', path, stats
-                        @emit 'change:dir', path, stats, list[..]
-            else if evnt is 'rename'
-                @_watching.dirs[path].close()
-                delete @_watching.dirs[path]
+            stat path, (err, stats) =>
+                return @emit 'error', path, err if err
+                readdir path, (err, nl) =>
+                    return @emit 'error', path, err if err
+                    @rem join path, f for f in list when (nl.indexOf f) is -1
+                    @add join path, f for f in nl when (list.indexOf f) is -1
+                    list = nl
+                    @emit 'change', path, stats
+                    @emit 'change:dir', path, stats, list[..]
         @emit 'watch', path
         @emit 'watch:dir', path
         @

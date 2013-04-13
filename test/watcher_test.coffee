@@ -132,6 +132,7 @@ describe 'Watcher', ->
     describe 'watch', ->
 
         describe 'addDir', ->
+
             before (done) ->
                 @spys =
                     'change': sinon.spy()
@@ -144,7 +145,6 @@ describe 'Watcher', ->
                     @watcher.on key, value
                 mkdirSync fixture 'a'
                 @watcher.addDir fixture 'a'
-                writeFileSync (fixture 'a', '1.js'), 'change'
                 delay ->
                     done()
 
@@ -171,18 +171,16 @@ describe 'Watcher', ->
                 it 'Should emit `error` when there is an error'
                 it 'Should call `add` on all new files and directories'
                 it 'Should call `rem` on all removed files and directories'
-                it 'Should emit `change` when directories change'
-                # , (done) ->
-                #     writeFileSync (fixture 'a', '1.js'), 'change'
-                #     delay =>
-                #         @spys['change'].should.have.been.called
-                #         done()
-                it 'Should emit `change:dir` when directories change'
-                # , (done) ->
-                #     writeFileSync (fixture 'a', '1.js'), 'change:dir'
-                #     delay =>
-                #         @spys['change:dir'].should.have.been.calledOnce
-                #         done()
+                it 'Should emit `change` when directories change', (done) ->
+                    writeFileSync (fixture 'a', '1.js'), 'change'
+                    delay =>
+                        @spys['change'].should.have.been.called
+                        done()
+                it 'Should emit `change:dir` when directories change', (done) ->
+                    writeFileSync (fixture 'a', '1.js'), 'change:dir'
+                    delay =>
+                        @spys['change:dir'].should.have.been.called
+                        done()
                     # @spys['error'].should.have.been.calledOnce
 
         describe 'addFile', ->
@@ -242,6 +240,10 @@ describe 'Watcher', ->
 
         describe 'remFile', ->
             it 'Should emit `unwatch` and `unwatch:file` when watching a file'
+
+        describe 'close', ->
+            it 'Should unwatch all files and directories'
+            it 'Should close all FSWatcher instances'
 
 
     describe 'watchFile', ->
@@ -355,6 +357,9 @@ describe 'Watcher', ->
         describe 'remFile', ->
             it 'Should emit `unwatch` and `unwatch:file` when watching a file'
 
+        describe 'close', ->
+            it 'Should unwatch all files and directories'
+            it 'Should run unwatchFile on all watched files and directories'
 
 
     # it 'Expect fixture files to have been created', ->

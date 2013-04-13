@@ -1,3 +1,6 @@
+# Cordell 0.1.5 (April 13, 2013)
+* Fixed watcher module "watch" now watches directories correctly
+
 # Cordell 0.1.4 (April 13, 2013)
 * linter & tester are now EventEmitters
 * Cordell::test - Catch mocha errors and use exit code
