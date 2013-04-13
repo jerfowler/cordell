@@ -144,6 +144,7 @@ describe 'Watcher', ->
                     @watcher.on key, value
                 mkdirSync fixture 'a'
                 @watcher.addDir fixture 'a'
+                writeFileSync (fixture 'a', '1.js'), 'change'
                 delay ->
                     done()
 
