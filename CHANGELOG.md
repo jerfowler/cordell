@@ -1,3 +1,9 @@
+# Cordell 0.1.4 (April 13, 2013)
+* linter & tester are now EventEmitters
+* Cordell::test - Catch mocha errors and use exit code
+* watcher is now modular, can use watchFile (default) or watch
+
+
 # Cordell 0.1.3 (March 14, 2013)
 * Updated README
 * added custom logger parameter to ranger
