@@ -72,8 +72,9 @@ describe 'Watcher', ->
         it '`match` - option that matches filenames'
         it '`matchPath` - option that matches directories'
         it '`debug` - option to turn on debug messages'
-        it '`persistant` - option to pass to watchFile'
+        it '`persistent` - option to pass to watchFile'
         it '`interval` - option to pass to watchFile'
+        it '`module` - option to select the watch module'
 
     describe 'add', ->
         before ->
@@ -120,116 +121,6 @@ describe 'Watcher', ->
 
         it 'Should ignore duplicate paths'
 
-    describe 'addDir', ->
-        before (done) ->
-            @spys =
-                'change': sinon.spy()
-                'change:dir': sinon.spy()
-                'watch': sinon.spy()
-                'watch:dir': sinon.spy()
-                'error': sinon.spy()
-            @watcher = new Watcher
-            for own key, value of @spys
-                @watcher.on key, value
-            mkdirSync fixture 'a'
-            @watcher.addDir fixture 'a'
-            delay ->
-                done()
-
-        after ->
-            @watcher.close()
-            for own key, value of @spys
-                @watcher.removeListener key, value
-                delete @spys[key]
-            delete @watcher
-            unlinkSync fixture 'a', '1.js'
-            rmdirSync fixture 'a'
-
-        beforeEach (done) ->
-            delay done
-
-        it 'Should ignore duplicate paths'
-        it 'Should emit `watch` when watching a directory', ->
-            @spys['watch'].should.have.been.called
-
-        it 'Should emit `watch:dir` when watching a directory', ->
-            @spys['watch:dir'].should.have.been.calledOnce
-
-        describe 'watchFile callback', ->
-
-            it 'Should emit `error` when there is an error'
-            it 'Should call `add` on all new files and directories'
-            it 'Should call `rem` on all removed files and directories'
-
-            it 'Should emit `change` when directories change', (done) ->
-                writeFileSync (fixture 'a', '1.js'), 'change'
-                delay =>
-                    @spys['change'].should.have.been.called
-                    done()
-
-            it 'Should emit `change:dir` when directories change', (done) ->
-                writeFileSync (fixture 'a', '1.js'), 'change:dir'
-                delay =>
-                    @spys['change:dir'].should.have.been.calledOnce
-                    done()
-
-            
-                # @spys['error'].should.have.been.calledOnce
-        
-
-    describe 'addFile', ->
-        before (done) ->
-            @spys =
-                'change': sinon.spy()
-                'change:file': sinon.spy()
-                'watch': sinon.spy()
-                'watch:file': sinon.spy()
-                'error': sinon.spy()
-
-            @watcher = new Watcher
-            for own key, value of @spys
-                @watcher.on key, value
-            mkdirSync fixture 'a'
-            writeFileSync fixture 'a', '1.js'
-            @watcher.addFile fixture 'a', '1.js'
-            delay ->
-                done()
-
-        after ->
-            @watcher.close()
-            for own key, value of @spys
-                @watcher.removeListener key, value
-                delete @spys[key]
-            delete @watcher
-            unlinkSync fixture 'a', '1.js'
-            rmdirSync fixture 'a'
-
-        beforeEach (done) ->
-            delay done
-
-        it 'Should ignore duplicate paths'
-        it 'Should emit `watch` when watching a file', ->
-            @spys['watch'].should.have.been.called
-
-        it 'Should emit `watch:file` when watching a file', ->
-            @spys['watch:file'].should.have.been.calledOnce
-
-        describe 'watchFile callback', ->
-
-            it 'Should emit `change` when files change', (done) ->
-                writeFileSync (fixture 'a', '1.js'), 'change'
-                delay =>
-                    @spys['change'].should.have.been.called
-                    done()
-                
-            it 'Should emit `change:file` when files change', (done) ->
-                writeFileSync (fixture 'a', '1.js'), 'change:file'
-                delay =>
-                    @spys['change:file'].should.have.been.called
-                    done()
-            it 'Should not emit `add` and `add:file` events'
-
-
     describe 'rem', ->
         it 'Should emit `rem` on removed directories'
         it 'Should emit `rem:dir` on removed directories'
@@ -238,11 +129,228 @@ describe 'Watcher', ->
         it 'Should remove all subdirectories and files beneath the path'
         it 'Should not remove other files or dirs unless they\'re beneath path'
 
-    describe 'remDir', ->
-        it 'Should emit `unwatch` and `unwatch:dir` when watching a directory'
+    describe 'watch', ->
 
-    describe 'remFile', ->
-        it 'Should emit `unwatch` and `unwatch:file` when watching a file'
+        describe 'addDir', ->
+            before (done) ->
+                @spys =
+                    'change': sinon.spy()
+                    'change:dir': sinon.spy()
+                    'watch': sinon.spy()
+                    'watch:dir': sinon.spy()
+                    'error': sinon.spy()
+                @watcher = new Watcher(module:'watch')
+                for own key, value of @spys
+                    @watcher.on key, value
+                mkdirSync fixture 'a'
+                @watcher.addDir fixture 'a'
+                delay ->
+                    done()
+
+            after ->
+                @watcher.close()
+                for own key, value of @spys
+                    @watcher.removeListener key, value
+                    delete @spys[key]
+                delete @watcher
+                unlinkSync fixture 'a', '1.js'
+                rmdirSync fixture 'a'
+
+            beforeEach (done) ->
+                delay done, 1500
+
+            it 'Should ignore duplicate paths'
+            it 'Should emit `watch` when watching a directory', ->
+                @spys['watch'].should.have.been.called
+
+            it 'Should emit `watch:dir` when watching a directory', ->
+                @spys['watch:dir'].should.have.been.calledOnce
+
+            describe 'watch callback', ->
+                it 'Should emit `error` when there is an error'
+                it 'Should call `add` on all new files and directories'
+                it 'Should call `rem` on all removed files and directories'
+                it 'Should emit `change` when directories change', (done) ->
+                    writeFileSync (fixture 'a', '1.js'), 'change'
+                    delay =>
+                        @spys['change'].should.have.been.called
+                        done()
+                it 'Should emit `change:dir` when directories change', (done) ->
+                    writeFileSync (fixture 'a', '1.js'), 'change:dir'
+                    delay =>
+                        @spys['change:dir'].should.have.been.calledOnce
+                        done()
+                    # @spys['error'].should.have.been.calledOnce
+
+        describe 'addFile', ->
+            before (done) ->
+                @spys =
+                    'change': sinon.spy()
+                    'change:file': sinon.spy()
+                    'watch': sinon.spy()
+                    'watch:file': sinon.spy()
+                    'error': sinon.spy()
+
+                @watcher = new Watcher
+                for own key, value of @spys
+                    @watcher.on key, value
+                mkdirSync fixture 'a'
+                writeFileSync fixture 'a', '1.js'
+                @watcher.addFile fixture 'a', '1.js'
+                delay ->
+                    done()
+
+            after ->
+                @watcher.close()
+                for own key, value of @spys
+                    @watcher.removeListener key, value
+                    delete @spys[key]
+                delete @watcher
+                unlinkSync fixture 'a', '1.js'
+                rmdirSync fixture 'a'
+
+            beforeEach (done) ->
+                delay done
+
+            it 'Should ignore duplicate paths'
+            it 'Should emit `watch` when watching a file', ->
+                @spys['watch'].should.have.been.called
+
+            it 'Should emit `watch:file` when watching a file', ->
+                @spys['watch:file'].should.have.been.calledOnce
+
+            describe 'watch callback', ->
+
+                it 'Should emit `change` when files change', (done) ->
+                    writeFileSync (fixture 'a', '1.js'), 'change'
+                    delay =>
+                        @spys['change'].should.have.been.called
+                        done()
+                    
+                it 'Should emit `change:file` when files change', (done) ->
+                    writeFileSync (fixture 'a', '1.js'), 'change:file'
+                    delay =>
+                        @spys['change:file'].should.have.been.called
+                        done()
+                it 'Should not emit `add` and `add:file` events'
+
+        describe 'remDir', ->
+            it 'Should emit `unwatch` and `unwatch:dir` when watching a directory'
+
+        describe 'remFile', ->
+            it 'Should emit `unwatch` and `unwatch:file` when watching a file'
+
+
+    describe 'watchFile', ->
+
+        describe 'addDir', ->
+            before (done) ->
+                @spys =
+                    'change': sinon.spy()
+                    'change:dir': sinon.spy()
+                    'watch': sinon.spy()
+                    'watch:dir': sinon.spy()
+                    'error': sinon.spy()
+                @watcher = new Watcher
+                for own key, value of @spys
+                    @watcher.on key, value
+                mkdirSync fixture 'a'
+                @watcher.addDir fixture 'a'
+                delay ->
+                    done()
+
+            after ->
+                @watcher.close()
+                for own key, value of @spys
+                    @watcher.removeListener key, value
+                    delete @spys[key]
+                delete @watcher
+                unlinkSync fixture 'a', '1.js'
+                rmdirSync fixture 'a'
+
+            beforeEach (done) ->
+                delay done
+
+            it 'Should ignore duplicate paths'
+            it 'Should emit `watch` when watching a directory', ->
+                @spys['watch'].should.have.been.called
+
+            it 'Should emit `watch:dir` when watching a directory', ->
+                @spys['watch:dir'].should.have.been.calledOnce
+
+            describe 'watchFile callback', ->
+                it 'Should emit `error` when there is an error'
+                it 'Should call `add` on all new files and directories'
+                it 'Should call `rem` on all removed files and directories'
+                it 'Should emit `change` when directories change', (done) ->
+                    writeFileSync (fixture 'a', '1.js'), 'change'
+                    delay =>
+                        @spys['change'].should.have.been.called
+                        done()
+                it 'Should emit `change:dir` when directories change', (done) ->
+                    writeFileSync (fixture 'a', '1.js'), 'change:dir'
+                    delay =>
+                        @spys['change:dir'].should.have.been.calledOnce
+                        done()
+                    # @spys['error'].should.have.been.calledOnce
+
+        describe 'addFile', ->
+            before (done) ->
+                @spys =
+                    'change': sinon.spy()
+                    'change:file': sinon.spy()
+                    'watch': sinon.spy()
+                    'watch:file': sinon.spy()
+                    'error': sinon.spy()
+
+                @watcher = new Watcher
+                for own key, value of @spys
+                    @watcher.on key, value
+                mkdirSync fixture 'a'
+                writeFileSync fixture 'a', '1.js'
+                @watcher.addFile fixture 'a', '1.js'
+                delay ->
+                    done()
+
+            after ->
+                @watcher.close()
+                for own key, value of @spys
+                    @watcher.removeListener key, value
+                    delete @spys[key]
+                delete @watcher
+                unlinkSync fixture 'a', '1.js'
+                rmdirSync fixture 'a'
+
+            beforeEach (done) ->
+                delay done
+
+            it 'Should ignore duplicate paths'
+            it 'Should emit `watch` when watching a file', ->
+                @spys['watch'].should.have.been.called
+
+            it 'Should emit `watch:file` when watching a file', ->
+                @spys['watch:file'].should.have.been.calledOnce
+
+            describe 'watchFile callback', ->
+
+                it 'Should emit `change` when files change', (done) ->
+                    writeFileSync (fixture 'a', '1.js'), 'change'
+                    delay =>
+                        @spys['change'].should.have.been.called
+                        done()
+                    
+                it 'Should emit `change:file` when files change', (done) ->
+                    writeFileSync (fixture 'a', '1.js'), 'change:file'
+                    delay =>
+                        @spys['change:file'].should.have.been.called
+                        done()
+                it 'Should not emit `add` and `add:file` events'
+
+        describe 'remDir', ->
+            it 'Should emit `unwatch` and `unwatch:dir` when watching a directory'
+
+        describe 'remFile', ->
+            it 'Should emit `unwatch` and `unwatch:file` when watching a file'
 
 
 

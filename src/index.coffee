@@ -48,6 +48,8 @@ module.exports.lint = (paths, options={}, logger) ->
 
 module.exports.test = (paths, options={}, logger) ->
     tester = new Tester(options)
+    tester.on 'mocha:failures', (failures) ->
+        process.exit failures
     walker = new Walker(paths, options)
     walker.on 'end', (files, stats) ->
         tester.test files...

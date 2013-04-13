@@ -50,14 +50,14 @@ describe 'Walker', ->
     describe 'method `walk`', ->
         it 'takes multiple path parameters'
         it 'can be called multiple times'
-        it 'is chainable, returns reference to `this`'
+        it 'is chain-able, returns reference to `this`'
 
     describe 'method `close`', ->
         it 'resets walker if `end` event has already been emitted'
         it 'resets walker after `end` event has been emitted, if currently walking'
         it 'emits `closed` event when walker has been reset'
         it 'does nothing if not ended or walking'
-        it 'is chainable, returns reference to `this`'
+        it 'is chain-able, returns reference to `this`'
 
     describe 'events emitted', ->
 
@@ -79,7 +79,7 @@ describe 'Walker', ->
 
         it 'Should emit `other` event when a special file is walked'
 
-        it 'Shoule emit `error` event when the path doesn\'t exist', (done) ->
+        it 'Should emit `error` event when the path doesn\'t exist', (done) ->
             spy = sinon.spy()
             @walker.on 'error', spy
             @walker.on 'end', ->

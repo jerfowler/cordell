@@ -1,6 +1,7 @@
+{EventEmitter} = require 'events'
 Mocha = require 'mocha'
 
-class Tester
+class Tester extends EventEmitter
     constructor: (config, logger) ->
         @_source = config.source ? /.*\.(coffee|js)$/
         @_config = config?.tester ? {}
@@ -19,8 +20,10 @@ class Tester
         mocha = new Mocha(@_mocha.options)
         for file in files
             @_debug "Running #{file}..."
+            @emit 'mocha:addFile', file
             mocha.addFile file
-        mocha.run()
+        mocha.run (failures) =>
+            @emit 'mocha:failures', failures
 
     add: (paths...) ->
         for path in paths
