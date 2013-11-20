@@ -43,7 +43,7 @@ class Walker extends EventEmitter
             @emit 'change:dir', path, stats, list
         @_watcher.on 'change:file', (path, stats) =>
             @emit 'change', path, stats
-        @_watcher.on 'error', (path, error) ->
+        @_watcher.on 'error', (path, error) =>
             @emit 'error', path, error
         @on 'file', (path) ->
             @_watcher.addFile path
