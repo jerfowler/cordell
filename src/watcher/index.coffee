@@ -26,6 +26,15 @@ class Watcher extends EventEmitter
         module ?= new modules[@_module]
         @[name] = method for name, method of module
 
+    emit: (event, arg1) ->
+      data = if arguments.length == 2 then [arg1] else [].slice.call(arguments, 1)
+      args = [event].concat(data)
+      EventEmitter.prototype.emit.apply(this, args)
+      if event == 'add' || event == 'add:dir' || event == 'add:file' || event == 'rem' ||
+        event == 'rem:file' || event == 'rem:dir' || event == 'change' ||
+        event == 'change:dir' || event == 'change:file'
+          EventEmitter.prototype.emit.apply(this, ['all'].concat(args))
+
     _debug: (name) ->
         debug = require('debug')("#{name}:watcher")
         @on 'add:file', (path) ->

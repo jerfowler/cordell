@@ -76,6 +76,65 @@ describe 'Watcher', ->
         it '`interval` - option to pass to watchFile'
         it '`module` - option to select the watch module'
 
+    describe 'all', ->
+        before ->
+            @spys =
+                'all': sinon.spy()
+                'add': sinon.spy()
+                'rem': sinon.spy()
+                'change': sinon.spy()
+                'error': sinon.spy()
+            @watcher = new Watcher
+            for own key, value of @spys
+                @watcher.on key, value
+            mkdirSync fixture 'a'
+            mkdirSync fixture 'b'
+            writeFileSync fixture 'a', '1.js'
+            @watcher.add fixture 'a'
+            @watcher.add fixture 'b'
+            @watcher.add fixture 'a', '1.js'
+
+        after ->
+            @watcher.close()
+            for own key, value of @spys
+                @watcher.removeListener key, value
+                delete @spys[key]
+            delete @watcher
+            rmdirSync fixture 'e'
+
+        beforeEach (done) ->
+            delay done
+
+        it 'Should emit `all` on new directories', ->
+            @spys['add'].should.have.been.called
+            @spys['all'].should.have.been.called
+
+        it 'Should emit `all` on new files', ->
+            @spys['add'].should.have.been.called
+            @spys['all'].should.have.been.called
+
+        # FIXME no rem event sent for rmdir
+        # it 'Should emit `all` on removed directories', (done) ->
+        #     rmdirSync fixture 'b'
+        #     delay =>
+        #         @spys['rem'].should.have.been.called
+        #         @spys['all'].should.have.been.called
+        #         done()
+
+        it 'Should emit `all` on removed files', (done) ->
+            unlinkSync (fixture 'a', '1.js')
+            delay =>
+                @spys['rem'].should.have.been.called
+                @spys['all'].should.have.been.called
+                done()
+
+        it 'Should emit `all` when directories renamed', (done) ->
+                    renameSync (fixture 'a'), (fixture 'e')
+                    delay =>
+                        @spys['change'].should.have.been.called
+                        @spys['all'].should.have.been.called
+                        done()
+
     describe 'add', ->
         before ->
             @spys =
