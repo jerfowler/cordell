@@ -35,7 +35,7 @@ I feel Cordell does all that and more.
 - more configurable ignore and match options
 - crisp / clean coffeescript source
 - a built-in CI environment that makes use of the watcher / walker combo
-    - [mocha](http://visionmedia.github.com/mocha/)
+    - [mocha](http://mochajs.org/)
     - [coffeelint](http://www.coffeelint.org/)
     - [jshint](http://www.jshint.com/)
 
